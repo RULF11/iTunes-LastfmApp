@@ -18,7 +18,6 @@
 		409C5497267A9C46001201E9 /* DetailCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 409C5495267A9C45001201E9 /* DetailCollectionViewCell.swift */; };
 		409C5498267A9C46001201E9 /* DetailCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 409C5496267A9C45001201E9 /* DetailCollectionViewCell.xib */; };
 		40B7DAAC267AAA1600534631 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40B7DAAB267AAA1600534631 /* Models.swift */; };
-		40DA2C7326C31E2100D96422 /* LaunchAppViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40DA2C7226C31E2100D96422 /* LaunchAppViewController.swift */; };
 		40E14219267AADEA008C2654 /* CategoryCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40E14217267AADEA008C2654 /* CategoryCollectionViewCell.swift */; };
 		40E1421A267AADEA008C2654 /* CategoryCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 40E14218267AADEA008C2654 /* CategoryCollectionViewCell.xib */; };
 /* End PBXBuildFile section */
@@ -37,7 +36,6 @@
 		409C5495267A9C45001201E9 /* DetailCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailCollectionViewCell.swift; sourceTree = "<group>"; };
 		409C5496267A9C45001201E9 /* DetailCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DetailCollectionViewCell.xib; sourceTree = "<group>"; };
 		40B7DAAB267AAA1600534631 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
-		40DA2C7226C31E2100D96422 /* LaunchAppViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAppViewController.swift; sourceTree = "<group>"; };
 		40E14217267AADEA008C2654 /* CategoryCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryCollectionViewCell.swift; sourceTree = "<group>"; };
 		40E14218267AADEA008C2654 /* CategoryCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CategoryCollectionViewCell.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -88,7 +86,6 @@
 				404DF5BA26740B4A00B33C5E /* Main.storyboard */,
 				404DF5BD26740B4B00B33C5E /* Assets.xcassets */,
 				404DF5BF26740B4B00B33C5E /* LaunchScreen.storyboard */,
-				40DA2C7226C31E2100D96422 /* LaunchAppViewController.swift */,
 				404DF5C226740B4B00B33C5E /* Info.plist */,
 			);
 			path = "iTunes&LastfmApp";
@@ -209,7 +206,6 @@
 				40470AEB26B4AC96003D19AF /* NetworkManager.swift in Sources */,
 				40E14219267AADEA008C2654 /* CategoryCollectionViewCell.swift in Sources */,
 				40470AEF26B75720003D19AF /* SearchViewPresenter.swift in Sources */,
-				40DA2C7326C31E2100D96422 /* LaunchAppViewController.swift in Sources */,
 				404DF5B726740B4A00B33C5E /* SceneDelegate.swift in Sources */,
 				40B7DAAC267AAA1600534631 /* Models.swift in Sources */,
 			);

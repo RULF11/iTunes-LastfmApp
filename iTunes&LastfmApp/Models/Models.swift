@@ -7,18 +7,11 @@
 
 import Foundation
 
-//struct ModelForView {
-//    let type: String
-//    let imageURL: String
-//    let name: String
-//}
-
 struct MainViewModel {
     let kind: String
     var cellModel: [CollectionCellModel]
-
+    
     init(kind: String, cellModel: [CollectionCellModel]) {
-//        self.kind = MainViewModel.convertToRusKind(kind)
         self.kind = kind
         self.cellModel = cellModel
     }
@@ -26,18 +19,17 @@ struct MainViewModel {
     static func createModel(_ model: [BusinessJSONModel]) -> [MainViewModel] {
         
         var mainModelForItems: [MainViewModel] = []
-        var a: [String: Int] = [:]
+        var rememberIndexDict: [String: Int] = [:]
         
         for element in model {
-            
-            
+        
             let kind = MainViewModel.convertToRusKind(element.kind)
             
-            if let index = a[kind] {
+            if let index = rememberIndexDict[kind] {
                 mainModelForItems[index].cellModel
                     .append(CollectionCellModel(from: element))
             } else {
-                a[kind] = mainModelForItems.count
+                rememberIndexDict[kind] = mainModelForItems.count
                 mainModelForItems
                     .append(MainViewModel(kind: kind,
                                           cellModel: [CollectionCellModel(from: element)]))
@@ -50,23 +42,23 @@ struct MainViewModel {
         switch kind {
         case "book": return "Книга"
         case "album": return "Альбом"
-        case "coached-audio": return "coached-audio"
-        case "feature-movie": return "feature-movie"
-        case "interactive-booklet": return "interactive-booklet"
-        case "music-video": return "music-video"
-        case "pdf podcast": return "pdf podcast"
-        case "podcast-episode": return "podcast-episode"
-        case "software-package": return "software-package"
+        case "coached-audio": return "Песня"
+        case "feature-movie": return "Фильм"
+        case "interactive-booklet": return "Брошюра"
+        case "music-video": return "Клип"
+        case "pdf podcast": return "PDF подкаст"
+        case "podcast-episode": return "Подкаст-эпизод"
+        case "software-package": return "ПО"
         case "song": return "Песня"
-        case "tv-episode": return "tv-episode"
+        case "tv-episode": return "ТВ эпизод"
         case "artist": return "Артист"
-//        case "podcast": return "podcast"
+        case "podcast": return "Подскаст"
         default: return "Другое"
         }
     }
 }
 
-    
+
 
 struct CollectionCellModel {
     let imageURL: String
@@ -78,6 +70,7 @@ struct CollectionCellModel {
         self.artistName = artistName
         self.trackCensoredName = trackCensoredName
     }
+    
     init(from model: BusinessJSONModel) {
         self.artistName = model.artistName ?? ""
         self.imageURL = model.artworkUrl100 ?? ""
