@@ -15,7 +15,7 @@ class CategoryCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var indexLabel: UILabel!
     
     var currentIndexPath: IndexPath!
-    var cellModel: [CollectionCellModel] = []
+    var cellModel: [CollectionCelliTunesModel] = []
     
     private let cellIdentifier = "DetailCollectionViewCell"
     

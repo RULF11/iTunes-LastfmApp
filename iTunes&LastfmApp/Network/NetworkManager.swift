@@ -7,29 +7,13 @@
 
 import Foundation
 
-struct BusinessJSONModel: Decodable {
-    let artistId: Int?
-    let artistName: String?
-    let artistViewUrl: String?
-    let artworkUrl100: String?
-    let collectionCensoredName: String?
-    let collectionViewUrl: String?
-    let kind: String?
-    let releaseDate: String?
-    let trackCensoredName: String?
-    let trackViewUrl: String?
-    let wrapperType: String?
+enum NetworkResponce {
+    case error(String)
+    case success(FullJSONModel)
 }
 
-struct FullJSONModel: Decodable {
-    let resultCount: Int?
-    let results: [BusinessJSONModel]?
-}
-
-enum SearchLimit: String {
-    case min = "25"
-    case standart = "50"
-    case max = "200"
+enum searchSystem {
+    case iTunes(searchText: String, searchLimit: SearchLimit)
 }
 
 class NetworkManager {
@@ -37,38 +21,48 @@ class NetworkManager {
     static var shared: NetworkManager! = NetworkManager()
     
     private init() {}
+    deinit {
+        print("deinit NetworkManager")
+    }
     
-    func getData(searchText: String,
-                 searchLimit: SearchLimit,
-                 complition: @escaping (FullJSONModel) -> Void) {
-        var urlComponents = URLComponents(string: "https://itunes.apple.com/search")
-        urlComponents?.queryItems = [URLQueryItem(name: "term", value: searchText),
-                                     URLQueryItem(name: "limit", value: searchLimit.rawValue)]
+    func getDataFromiTunes(searchSystem: searchSystem,
+                           complition: @escaping (NetworkResponce) -> Void) {
         
-        let urlRequest = urlComponents?.url
-        let getRequestData = URLRequest(url: urlRequest!)
+        let getRequestData = setupURLRequest(searchSystem)
         
         URLSession.shared.dataTask(with: getRequestData) { (data, _, error) in
             
-            if let error = error {
-                print("Requst error: \(error)")
+            if let _ = error {
+                complition(.error("Ошибка запроса, проверьте доступ к интернету"))
                 return
             }
             
             guard let data = data else { return }
-            
             do {
                 let data = try JSONDecoder().decode(FullJSONModel.self, from: data)
-                complition(data)
-            } catch let error {
-                print(error)
+                complition(.success(data))
+            } catch {
+                complition(.error("Ошибка получения данных"))
             }
-            
         }.resume()
     }
     
-    deinit {
-        print("deinit NetworkManager")
+    
+    private func setupURLRequest(_ searchSystem: searchSystem) -> URLRequest {
+        
+        switch searchSystem {
+        case .iTunes(let searchText, let searchLimit):
+            
+            var urlComponents = URLComponents(string: "https://itunes.apple.com/search")
+            let queryItems = [URLQueryItem(name: "term", value: searchText),
+                              URLQueryItem(name: "limit", value: searchLimit.rawValue)]
+            
+            urlComponents?.queryItems = queryItems
+            let urlRequest = urlComponents?.url
+            let getRequestData = URLRequest(url: urlRequest!)
+            
+            return getRequestData
+        }
     }
 }
 

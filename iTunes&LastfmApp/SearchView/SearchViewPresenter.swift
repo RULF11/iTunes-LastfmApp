@@ -7,19 +7,17 @@
 
 import Foundation
 
+
 protocol SearchViewPresenterProtocol: class {
     init(view: SearchViewProtocol)
-    
-    var mainModelForItems: SafeArray<MainViewModel> { get }
-    
-    func getSearchText(_ text: String?, searchLimit: SearchLimit)
-    func removeSearchText()
+    var mainModelForItems: SafeArray<MainViewiTunesModel> { get }
+    var showAll: Bool { get }
+    func getSearchText(_ text: String?, limit: SearchLimit)
 }
 
 protocol SearchViewProtocol: class {
     func collectionReloadData()
-    func deleteRows()
-    func showButtonResult()
+    func showAlertController(with title: String, and message: String)
 }
 
 
@@ -29,110 +27,74 @@ class SearchViewPresenter: SearchViewPresenterProtocol {
         NetworkManager.shared = nil
         print("deinit SearchViewPresenter")
     }
-    weak var view: SearchViewProtocol!
     
-    var mainModelForItems = SafeArray<MainViewModel>()
-    private var currentSearchText: String!
+    weak var view: SearchViewProtocol!
+    var mainModelForItems = SafeArray<MainViewiTunesModel>()
+    private var currentSearchText: String?
+    var showAll: Bool {
+        let text = DataManager.shared.readData(forKey: DataManager.keyForData) as? String
+        if currentSearchText == text {
+            return true
+        }
+        return false
+    }
     
     required init(view: SearchViewProtocol) {
         self.view = view
     }
     
-    func getSearchText(_ text: String?, searchLimit: SearchLimit) {
-        guard let text = text else { return }
-        getDataFromNetwork(text, searchLimit: searchLimit)
-    }
-    
-    
-    func removeSearchText() {
-        view.deleteRows()
-        self.mainModelForItems.removeAll()
-        view.collectionReloadData()
+    func getSearchText(_ text: String?, limit: SearchLimit) {
+        guard let text = text else {
+            return
+        }
+        if limit == .max {
+            DataManager.shared.writeData(text, forKey: DataManager.keyForData)
+        }
+        currentSearchText = text
+        getDataFromNetwork(text, searchLimit: limit)
     }
     
     private func getDataFromNetwork(_ searchText: String, searchLimit: SearchLimit) {
-        currentSearchText = searchText
-
-        print("text: \(searchText)")
-        
-        let group = DispatchGroup()
-
-        NetworkManager.shared.getData(searchText: searchText,
-                                      searchLimit: searchLimit) { [weak self] (model) in
-
-//            sleep(10)
-            if self?.currentSearchText == searchText {
-
+    
+                
+        NetworkManager
+            .shared
+            .getDataFromiTunes(searchSystem: .iTunes(searchText: searchText,
+                                                     searchLimit: searchLimit)) { [weak self] (NetworkResponse) in
+            
+            guard self?.currentSearchText == searchText else { return }
+            
+            switch NetworkResponse {
+            case .error(let errorText):
+                DispatchQueue.main.async {
+                    self?.view.showAlertController(with: "Ошибка", and: errorText)
+                }
+            case .success(let model):
                 guard let results = model.results else { return }
                 self?.mainModelForItems.removeAll()
-
-                var aaa = MainViewModel.createModel(results)
-
-                for _ in 1...1 {
-                    aaa += aaa
-                }
-
-                self?.mainModelForItems.append(aaa.sorted { $0.kind > $1.kind })
-                print(aaa.count)
-                DispatchQueue.main.async(group: group) {
-
+                self?.mainModelForItems.append(MainViewiTunesModel.createModel(results))
+                //проверка работоспособности
+//                var aaa = MainViewModel.createModel(results)
+//                for _ in 1...1 {
+//                    aaa += aaa
+//                }
+//
+//                self?.mainModelForItems.append(aaa.sorted { $0.kind > $1.kind })
+//                print(aaa.count)
+                DispatchQueue.main.async {
+                    if self?.mainModelForItems.count ?? 0 > 0 {
+                        self?.view.collectionReloadData()
+                    } else {
+                        self?.view.showAlertController(with: "Ничего не найдено",
+                                                       and: "")
+                    }
                     self?.view.collectionReloadData()
                     print("done")
                 }
-                group.notify(queue: .main){
-                    print("endUpdate ")
-//                    self.view.showButtonResult()
-                }
             }
         }
-        
     }
 }
 
 
-
-
-
-class SafeArray<T> {
-    
-    deinit {
-        print("deinit SafeArray")
-    }
-    
-    private var array: [T] = []
-    
-    private let queue = DispatchQueue(label: "mySafeArray", attributes: .concurrent)
-
-    
-    var count: Int {
-        var result = 0
-        queue.sync { result = self.array.count }
-        return result
-    }
-    func append(_ newArray: [T]) {
-        queue.async(flags: .barrier) {
-            self.array.append(contentsOf: newArray)
-        }
-    }
-    
-    func append(_ newElement: T) {
-        queue.async(flags: .barrier) {
-            self.array.append(newElement)
-        }
-    }
-    
-    func read() -> [T] {
-        var array: [T] = []
-        queue.sync {
-            array = self.array
-        }
-        return array
-    }
-    
-    func removeAll() {
-        queue.async(flags: .barrier) {
-            self.array.removeAll()
-        }
-    }
-}
 

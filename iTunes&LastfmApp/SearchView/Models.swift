@@ -7,32 +7,32 @@
 
 import Foundation
 
-struct MainViewModel {
+struct MainViewiTunesModel {
     let kind: String
-    var cellModel: [CollectionCellModel]
+    var cellModel: [CollectionCelliTunesModel]
     
-    init(kind: String, cellModel: [CollectionCellModel]) {
+    init(kind: String, cellModel: [CollectionCelliTunesModel]) {
         self.kind = kind
         self.cellModel = cellModel
     }
     
-    static func createModel(_ model: [BusinessJSONModel]) -> [MainViewModel] {
+    static func createModel(_ model: [BusinessJSONModel]) -> [MainViewiTunesModel] {
         
-        var mainModelForItems: [MainViewModel] = []
+        var mainModelForItems: [MainViewiTunesModel] = []
         var rememberIndexDict: [String: Int] = [:]
         
         for element in model {
         
-            let kind = MainViewModel.convertToRusKind(element.kind)
+            let kind = MainViewiTunesModel.convertToRusKind(element.kind)
             
             if let index = rememberIndexDict[kind] {
                 mainModelForItems[index].cellModel
-                    .append(CollectionCellModel(from: element))
+                    .append(CollectionCelliTunesModel(from: element))
             } else {
                 rememberIndexDict[kind] = mainModelForItems.count
                 mainModelForItems
-                    .append(MainViewModel(kind: kind,
-                                          cellModel: [CollectionCellModel(from: element)]))
+                    .append(MainViewiTunesModel(kind: kind,
+                                          cellModel: [CollectionCelliTunesModel(from: element)]))
             }
         }
         return mainModelForItems
@@ -60,7 +60,7 @@ struct MainViewModel {
 
 
 
-struct CollectionCellModel {
+struct CollectionCelliTunesModel {
     let imageURL: String
     let artistName: String
     let trackCensoredName: String
